@@ -206,7 +206,6 @@ public class PartMachine {
      * @return New CarPart that the machine just produced.
      */
     public CarPart produceCarPart() {
-    	
     	if (timer.front() != 0) {
             ConveyorBelt.enqueue(null);
     	}
