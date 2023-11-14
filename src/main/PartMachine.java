@@ -211,16 +211,14 @@ public class PartMachine {
             ConveyorBelt.enqueue(null);
     	}
     	else {
-    		String partName = pl.getName();
-    		int id = pl.getId();
     		double newWeight = pl.getWeight() - weightError + Math.random() * (pl.getWeight() + weightError  - pl.getWeight() - weightError);
     		if(getTotalPartsProduced() % chanceOfDefective == 0) {
-    			CarPart generatedPart = new CarPart(id, partName, newWeight, true);
+    			CarPart generatedPart = new CarPart(pl.getId(), pl.getName(), newWeight, true);
     			ConveyorBelt.enqueue(generatedPart);
     			setTotalPartsProduced(getTotalPartsProduced()+ 1);
     		}
     		else {
-    			CarPart generatedPart = new CarPart(id, partName, newWeight, false);
+    			CarPart generatedPart = new CarPart(pl.getId(), pl.getName(), newWeight, false);
     			ConveyorBelt.enqueue(generatedPart);
     			setTotalPartsProduced(getTotalPartsProduced()+ 1);
     		} 
