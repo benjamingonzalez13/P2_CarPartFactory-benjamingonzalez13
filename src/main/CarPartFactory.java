@@ -17,7 +17,7 @@ import interfaces.List;
  * are variables that represent location of the input data to be extracted. The other ones are data structures like Maps,
  * Queues and Stacks. We make use of maps because of their easy use to store a key and a value. For example, an Id with it's
  * corresponding CarPart. We also make use of ArrayList because the easy access to data, when knowing the index. We make use
- * of the stack because their LIFO behavior, it makes easy with the keeping up of new parts. 
+ * of the stack because the LIFO because, it makes easy with the keeping of new parts. 
  * 
  */
 public class CarPartFactory {
@@ -35,7 +35,7 @@ public class CarPartFactory {
        *   
        * @param orderPath		Location of the orders.csv
        * @param partsPath		Location of the parts.csv
-       * @throws IOException	        Handle case where improper data is loaded into program.
+       * @throws IOException	Handle case where improper data is loaded into program.
        */
     public CarPartFactory(String orderPath, String partsPath) throws IOException {
     	this.orderPath = orderPath;
@@ -150,7 +150,7 @@ public class CarPartFactory {
      * of data parsing creates an Order object. This method takes advantage of the file being a ".csv" and also the tuples 
      * being separated by "-". 
      * 
-     * @param path			Location of the input data to be analyzed.
+     * @param path				Location of the input data to be analyzed.
      * @throws IOException		Handle case where improper data is loaded into program.
      */
     public void setupOrders(String path) throws IOException {
@@ -180,7 +180,7 @@ public class CarPartFactory {
      * Method that takes in a location and using the Buffered Reader class, extracts data. With this data and using the used
      * of data parsing creates an PartMachine and CarPart object.  This method takes advantage of the file being a ".csv"
      * 
-     * @param path				Location of the input data to be analyzed.
+     * @param path					Location of the input data to be analyzed.
      * @throws IOException			Handle case where improper data is loaded into program.
      */
     public void setupMachines(String path) throws IOException {
@@ -272,27 +272,27 @@ public class CarPartFactory {
      * if there is add it to the production bin. At the end of day reset each conveyor belt, and left over go over to production 
      * bin. At the end process all orders.
      * 
-     * @param days 		How many days does the factory has to run for.
+     * @param days 			How many days does the factory has to run for.
      * @param minutes		How many minutes does the factory has run for each day.
      */
     public void runFactory(int days, int minutes) {
         for(int i = 1; i <= days; i++) {
             for(int j = 1; j <= minutes; j++) {
-                for(PartMachine machine : partMachines) {
-                    CarPart currPart = machine.produceCarPart();
+                for(int k = 0; k < partMachines.size(); k++) {
+                    CarPart currPart = partMachines.get(k).produceCarPart();
                     if(currPart != null) {
                         productionBin.push(currPart);
                     }
-                    if (!machine.getConveyorBelt().isEmpty()) {
-                        CarPart leftOver = machine.getConveyorBelt().dequeue();
+                    if (!partMachines.get(k).getConveyorBelt().isEmpty()) {
+                        CarPart leftOver = partMachines.get(k).getConveyorBelt().dequeue();
                         if (leftOver != null) {
                             productionBin.push(leftOver);
                         }
                     }
                 }
             } 
-            for (PartMachine machine : partMachines) {
-                machine.resetConveyorBelt();
+            for (int m = 0; m < partMachines.size(); m++) {
+            	partMachines.get(m).resetConveyorBelt();
             }
             storeInInventory();
         }
@@ -305,23 +305,23 @@ public class CarPartFactory {
      * 
      */
     public void processOrders() {
-        for(int i = 0; i <  orders.size(); i++) {
+    	for(int i = 0; i <  orders.size(); i++) {
             Map<Integer, Integer> requiredParts = orders.get(i).getRequestedParts();
             boolean enoughParts = true;
-            for(Integer partId : requiredParts.getKeys()) {
-                List<CarPart> partsInInventory = inventoryMap.get(partId);
-                if(partsInInventory == null || partsInInventory.size() < requiredParts.get(partId)) {
+            for(int j = 0; j < requiredParts.getKeys().size(); j++) {
+                List<CarPart> partsInInventory = inventoryMap.get(requiredParts.getKeys().get(j));
+                if(partsInInventory == null || partsInInventory.size() < requiredParts.get(requiredParts.getKeys().get(j))) {
                 	enoughParts = false;
                     break;
                 }
             }
             if(enoughParts) {
-                for(Integer partId : requiredParts.getKeys()) {
-                    List<CarPart> partsInInventory = inventoryMap.get(partId);
-                    for(int j = 0; j < requiredParts.get(partId); j++) {
+                for(int k = 0; k < requiredParts.getKeys().size(); k++) {
+                    List<CarPart> partsInInventory = inventoryMap.get(requiredParts.getKeys().get(k));
+                    for(int j = 0; j < requiredParts.get(requiredParts.getKeys().get(k)); j++) {
                         partsInInventory.remove(0);
                     }
-                    inventoryMap.put(partId, partsInInventory); 
+                    inventoryMap.put(requiredParts.getKeys().get(k), partsInInventory); 
                 }
                 orders.get(i).setFulfilled(true);
             }
